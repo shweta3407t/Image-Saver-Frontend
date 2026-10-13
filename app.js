@@ -1,122 +1,93 @@
- const express = require('express');
-const cors = require('cors');
-const app = express();
-
- app.use(cors({ origin: 'http://localhost:3000' })); 
-
-
-
-
-
-// let submitBtn = document.querySelector("#submitButton");
-let uploadResponsePara = document.querySelector("#uploadResponse");
-
- 
-//upload
- 
-
-const form = document.querySelector("#form");
-
 let url;
+//upload
+
+let uploadBox = document.querySelector(".uploadBox");
+
+const uploadForm = document.querySelector("#uploadForm");
 
 let uploadImage = async (event) => {
-  event.preventDefault();
-
-  const formData = new FormData(form);
-  // const allData =Object.fromEntries(formData.entries());
-
-const title = formData.get("title");
-const description = formData.get("description");
-const tag = formData.get("tag");
-const category = formData.get("category");
-const file = formData.get("file");
+  event.preventDefault(); 
+  const formData = new FormData(uploadForm);
 
   url = "http://localhost:8080/api/image/upload";
 
   let response = await fetch(url, {
     method: "post",
-    body: {
-      "title" : title ,
-      "description" : description ,
-      "tag" : tag,
-      "category" : category ,
-      "file" : file 
-    }
+    body: formData,
   });
 
-  let data = await response.json();
+  let data = await response.text();
 
   const responseParagraph = document.createElement("p");
   responseParagraph.textContent = data;
 
-  uploadBox.append(newParagraph);
+  uploadBox.append(responseParagraph);
 };
 
-form.addEventListener("submit", uploadImage);
+uploadForm.addEventListener("submit", uploadImage);
 
 
 
+//serach
+ 
+let searchBox = document.querySelector(".searchBox");
+
+const searchForm = document.querySelector("#searchForm");
+ 
+let searchImage = async (event) => {
+
+  event.preventDefault(); 
+
+  const formData=new FormData(searchForm);
+
+  const keyword =formData.get("keyword");
+
+    url = "http://localhost:8080/api/image/search";
+
+  response = await fetch(url);
+
+  let data = await response.json();
+  console.log(data )
 
 
+  let arrayData =data.get("content");
+
+  for(singleData of arrayData){
+    singleData.get({
+      "id" : id ,
+            "title":  title,
+            "tag": tag , 
+            "category": category,
+            "thumbnailUrl":  thumbnailUrl , 
+            "description": description ,
+            "createdAt": createdAt ,
+            "updatedAt":  updatedAt 
+    })
+  }
 
 
+  let currentPage = data.get("currentPage");
+  let totalElements  = data.get("totalElement");
+  let itemLimit = data.get("itemLimit");
+  let totalPages = data.get("totalPages");
+  let hasPrevious = data.get("hasPrevious");
+  let hasNext =data.get("hasNext");
 
+  
 
+   
 
+};
 
+searchForm.addEventListener("submit", searchImage);
 
+//{
+//    "content": [ ..... ],
+//     "currentPage": 0,
+//   "totalElements": 22,
+//      "itemLimit": 5,
+//    "totalPages": 5,
+//   "hasPrevious": false,
+//     "hasNext": true
+//}
 
-// let searchBtn = document.querySelector("#search");
-// let searchResponse = document.querySelector("#searchResponse");
-
-// let updateBtn = document.querySelector("#update");
-// let updateResponse = document.querySelector("#updateResponse");
-
-// let deleteBtn = document.querySelector("#delete");
-// let deleteResponse = document.querySelector("#deleteResponse");
-
-
-// //search  //all image search kabaki hai
-
-// let searchImage = async () => {
-//   url = "http://localhost:8080/api/image/search";
-
-//   let searchResptext-align: center;onse = await fetch(url, get);
-
-//   let searchdata = searchResponse.json();
-
-//   let imageUrl; // get image like from searchData and send to dowmload endpoint
-
-//   let imagereaponse= await fetch(imageUrl , get);
-
-//   let imageData=imagereaponse.json();
-
-//   searchResponse.innerText=imageData;
-
-// };
-
-// searchBtn.addEventListener("click", searchImage);
-
-// //update
-
-// let updateImage = async () => {
-//   url = "http://localhost:8080/api/image/update";
-//   let response = await fetch(url, put);
-
-//   let data = await response.json();
-
-//   updateResponse.innerText=data;
-//  };
-// updateBtn.addEventListener("click" , updateImage);
-
-// //delete
-
-// let deleteImage = async () => {
-//   url = "http://localhost:8080/api/image/delete";
-//   let response = await fetch(url, "delete");
-
-//   let data = await response.json();
-
-//   deleteResponse.innerText=data;
-//  };
-// deleteBtn.addEventListener("click" , deleteImage);

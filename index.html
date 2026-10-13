@@ -12,23 +12,69 @@
     </header>
 
     <div id="container">
-      <div id="firstPage"> 
-        <div class="uploadBox">
-          <h2>Upload</h2>
 
-          <form id="form">
-            <input type="text" name="title"  placeholder="Enter title" />
-            <input type="text"  name="description" placeholder="Enter description" />
-            <input type="text"  name="tag" placeholder="Enter tag" />
-            <input type="text"  name="category" placeholder="Enter category" />
-            <input type="file"  name="file" placeholder="Select ile" accept="image/*" />
+      <div id="firstPage">
+
+        <div class="uploadBox" >
+          <h2>Upload Image</h2>
+
+          <form id="uploadForm">
+            <label
+              >Name :
+              <input type="text" name="title" placeholder="Enter title" />
+            </label>
+            <br>
+
+            <label
+              >Deacription :
+              <input
+                type="text"
+                name="description"
+                placeholder="Enter description"
+              />
+            </label><br>
+
+            <label>Tag :
+              <input type="text" name="tag" placeholder="Enter tag" />
+            </label><br>
+
+            <label>category :
+              <input type="text" name="category" placeholder="Enter category" />
+            </label><br>
+
+            <label>File :
+              <input
+                type="file"
+                name="file"
+                placeholder="Select ile"
+                accept="image/*"
+              />
+            </label><br>
 
             <button id="submitButton" name="submit">Submit info</button>
           </form>
+        </div>
 
-         </div>
 
-        
+
+
+        <div class="searchBox">
+          <h2>search Image </h2>
+
+
+          <form  id="searchForm">
+            <label >Search Image: 
+            <input type="text"  id="keyword" placeholder="Enter keyword to search image" />
+
+            <button id="submitButton" >Search</button>
+
+          </label>
+
+             
+          </form>
+
+           
+        </div>
       </div>
     </div>
 

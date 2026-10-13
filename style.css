@@ -25,7 +25,7 @@ body {
   flex-wrap: wrap;
   flex-direction: column;
   background-color: aquamarine;
-  align-items: center;
+  align-items:  center;
 
   height: 80vh;
   width: 70vh;
@@ -37,6 +37,9 @@ body {
 }
 
 h2{
+  margin-left: 10px;
+margin-right: 10px;
+  margin-top: 20px;
   background-color: purple;
   color: blanchedalmond;
   width: 300px;
@@ -52,25 +55,41 @@ h2{
 }
 
 
-/* .uploadBox{
-  background-color: chocolate;
-  height: 200px;
-  width: 60vh;
-   align-items: center;
- 
+.uploadBox{
+  background-color: chocolate; 
   
- } */
 
-#form{
-     display: flex;
+  display: flex;
+  
+  flex-direction: column;
   justify-content: center;
+   padding-bottom: 10px;
+ }
+
+ .searchBox{
+  background-color: darkorange; 
+  align-items: center;
+  padding-bottom: 10px;
+  padding-left: 10px;
+ }
+
+#uploadform{
+     display: flex;
+  justify-content: left;
   flex-wrap: wrap;
   flex-direction: column;
-
-
-
-
 }
+
+#searchForm{
+     display: flex;
+  justify-content:  left;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+
+
+
 
 
 
