@@ -42,6 +42,8 @@ let searchImage = async (event) => {
 
   const keyword =formData.get("keyword");
 
+  //TODO: search by keyword remaiining
+
     url = "http://localhost:8080/api/image/search";
 
   response = await fetch(url);
@@ -50,9 +52,33 @@ let searchImage = async (event) => {
   console.log(data )
 
 
-  let arrayData =data.get("content");
+   
+
+  const { content, currentPage, totalPages,
+    totalElements , itemLimit , hasPrevious , hasNext } = data;
+
+  // console.log("arrayData" + arrayData);
+
+    content.forEach((item) => {
+
+      console.log(item);
+      const li = document.createElement('li');
+      li.textContent = item. ; // Use item directly if your list is just strings
+      listContainer.appendChild(li);
+    });
+
+    // if (Array.isArray(dataArray)) {
+    //   dataArray.forEach(item => {
+    //     console.log(item); // Process each item in the array
+    //   });
+    // } else {
+    //   console.error('Expected an array but received:', typeof dataArray);
+    // }
 
   for(singleData of arrayData){
+
+    console.log(singleData);
+
     singleData.get({
       "id" : id ,
             "title":  title,
@@ -66,14 +92,9 @@ let searchImage = async (event) => {
   }
 
 
-  let currentPage = data.get("currentPage");
-  let totalElements  = data.get("totalElement");
-  let itemLimit = data.get("itemLimit");
-  let totalPages = data.get("totalPages");
-  let hasPrevious = data.get("hasPrevious");
-  let hasNext =data.get("hasNext");
-
   
+  
+
 
    
 
