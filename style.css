@@ -89,10 +89,37 @@ margin-right: 10px;
 
 
 
+.pagination-container{
+  display: flex;
+   justify-content: center;
+   flex-wrap:  wrap;
+
+}
 
 
+/* for pagination in search */
 
+.pagination-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+button {
+  padding: 8px 12px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+button.active {
+  background-color: #4285F4; /* Google Blue */
+  color: white;
+  border-color: #4285F4;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-
+ 
 
 
