@@ -31,18 +31,24 @@ uploadForm.addEventListener("submit", uploadImage);
 const searchBox = document.querySelector(".searchBox");
 
 const searchForm = document.querySelector("#searchForm");
-
-const listContainer = document.createElement("ol");
+ 
 
 const keyword = document.querySelector("#keyword").value;
 
 const hasPreviousBtn = document.querySelector("#prev-btn");
 const hasNextBtn = document.querySelector("#next-btn");
- 
+
 const page = 0;
 
-let searchImage = async (event) => {
-  event.preventDefault();
+let currentPage = 1;
+let totalPages = 0;
+let itemLimit = 10;
+let hasPrevious;
+let hasNext;
+
+let searchImage = async ( event ) => {
+    
+   if (event) event.preventDefault();
 
   url = `http://localhost:8080/api/image/search?keyword=${encodeURIComponent(keyword)}&page=${page}`;
 
@@ -52,30 +58,50 @@ let searchImage = async (event) => {
   console.log(data);
 
   const content = data.content;
-  const currentPage = data.currentPage;
-  const totalPages = data.totalPages;
+  currentPage = data.currentPage;
+  totalPages = data.totalPages;
   const totalElements = data.totalElements;
-  const itemLimit = data.itemLimit;
-  const hasPrevious = data.hasPrevious;
-  const hasNext = data.hasNext;
+  itemLimit = data.itemLimit;
+  hasPrevious = data.hasPrevious;
+  hasNext = data.hasNext;
 
-  content.forEach( item  => {
+
+const listContainer = document.createElement("ol");
+
+  content.forEach((item) => {
     //content
 
-    const li = document.createElement("li");
+    let li = document.createElement("li");
+
     li.textContent = item.id;
+    listContainer.appendChild(li);
+
     li.textContent = item.title;
+    listContainer.appendChild(li);
+
     li.textContent = item.tag;
+    listContainer.appendChild(li);
+
     li.textContent = item.category;
+    listContainer.appendChild(li);
+
     li.textContent = item.thumbnailUrl;
+    listContainer.appendChild(li);
+
     li.textContent = item.updatedAt;
+    listContainer.appendChild(li);
+
     li.textContent = item.createdAt;
+    listContainer.appendChild(li);
 
     listContainer.appendChild(li);
 
-    displayList(currentPage , totalPages , maxVisiblePages = 1);
+
 
     
+    displayList(currentPage, totalPages, itemLimit);
+     
+
     //other data
   });
 
@@ -86,28 +112,25 @@ let searchImage = async (event) => {
 
 searchForm.addEventListener("submit", searchImage);
 
+function displayList(currentPage, totalPages, maxVisiblePages = 10) {
+  const pagenationData = getPage(currentPage, totalPages, maxVisiblePages);
+  const pageNumbers = document.querySelector("#page-numbers");
 
-function displayList(currentPage , totalPages , maxVisiblePages =10){
- const pagenationData= getPage(currentPage , totalPages ,maxVisiblePages );
-    const pageNumbers = document.querySelector("#page-numbers");
- 
-    pageNumbers.innerHTML="";
+  pageNumbers.innerHTML = "";
 
-    pagenationData.pages.forEach( (page) => {
-      const btn = document.createElement("button");
-      btn.innerText = page;
+  pagenationData.pages.forEach((page) => {
+    const btn = document.createElement("button");
+    btn.innerText = page;
 
-       btn.classList.toggle('active', page === currentPage);
-        
-        btn.addEventListener('click', () => {
-            currentPage = page;
-            renderUI();
-        });
-        pageNumbers.appendChild(btn);
+    btn.classList.toggle("active", page === currentPage);
+
+    btn.addEventListener("click", () => {
+      currentPage = page;
+      renderUI();
     });
+    pageNumbers.appendChild(btn);
+  });
 }
-
-
 
 //get search response page function
 function getPage(currentPage, totalPages, maxVisiblePages = 10) {
@@ -116,7 +139,7 @@ function getPage(currentPage, totalPages, maxVisiblePages = 10) {
   if (totalPages <= maxVisiblePages) {
     startPage = 1;
     endPage = totalPages;
-  } else { 
+  } else {
     let maxPageBeforeCurrentPage = Math.floor(maxVisiblePages) / 2;
     let maxPageAfterCurrentPage = Math.ceil(maxVisiblePages) / 2 - 1;
 
@@ -124,13 +147,26 @@ function getPage(currentPage, totalPages, maxVisiblePages = 10) {
       startPage = 1;
       endPage = maxVisiblePages;
     } else if (currentPage + maxPageAfterCurrentPage >= totalPages) {
-       startPage = totalPages - maxVisiblePages + 1;
+      startPage = totalPages - maxVisiblePages + 1;
       endPage = totalPages;
     } else {
-       startPage = currentPage - maxPageBeforeCurrentPage;
+      startPage = currentPage - maxPageBeforeCurrentPage;
       endPage = currentPage + maxPageAfterCurrentPage;
     }
   }
+
+  const pages = Array.from(
+    { length: endPage + 1 - startPage },
+    (_, i) => startPage + i,
+  );
+
+  return {
+    currentPage,
+    totalPages,
+    startPage,
+    endPage,
+    pages,
+  };
 }
 
 //pagination
@@ -138,7 +174,6 @@ function getPage(currentPage, totalPages, maxVisiblePages = 10) {
 hasPreviousBtn.addEventListener("click", () => {
   if (currentPage > 1) {
     currentPage--;
-
     searchImage();
   }
 });
@@ -146,7 +181,6 @@ hasPreviousBtn.addEventListener("click", () => {
 hasNextBtn.addEventListener("click", () => {
   if (currentPage < 1) {
     currentPage++;
-
     searchImage();
   }
 });
