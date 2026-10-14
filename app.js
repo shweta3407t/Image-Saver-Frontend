@@ -34,88 +34,119 @@ const searchForm = document.querySelector("#searchForm");
 
 const listContainer = document.createElement("ol");
 
-const searchInput = document.querySelector("#keyword");
-
+const keyword = document.querySelector("#keyword").value;
 
 const hasPreviousBtn = document.querySelector("#prev-btn");
 const hasNextBtn = document.querySelector("#next-btn");
-const pageNumbers = document.querySelector("#page-numbers");
-
-const keyword = searchInput.value;
-const page = 1;
+ 
+const page = 0;
 
 let searchImage = async (event) => {
   event.preventDefault();
 
-  url = `http://localhost:8080/api/image/searchkeyword=${encodeURIComponent(keyword)}&page=${page}`;
+  url = `http://localhost:8080/api/image/search?keyword=${encodeURIComponent(keyword)}&page=${page}`;
 
   const response = await fetch(url);
 
   let data = await response.json();
   console.log(data);
 
-  const {
-    content,
-    currentPage,
-    totalPages,
-    totalElements,
-    itemLimit,
-     hasPrevious,
-    hasNext,
-  } = data;
+  const content = data.content;
+  const currentPage = data.currentPage;
+  const totalPages = data.totalPages;
+  const totalElements = data.totalElements;
+  const itemLimit = data.itemLimit;
+  const hasPrevious = data.hasPrevious;
+  const hasNext = data.hasNext;
 
-  content.forEach((item) => {
+  content.forEach( item  => {
     //content
-    const id = item.id;
-
-    const title = item.title;
-    const description = item.description;
-    const tag = item.tag;
-    const category = item.category;
-    const thumbnailUrl = item.thumbnailUrl;
-    const updatedAt = item.updatedAt;
-    const createdAt = item.createdAt;
 
     const li = document.createElement("li");
-    li.textContent = li.item;
+    li.textContent = item.id;
+    li.textContent = item.title;
+    li.textContent = item.tag;
+    li.textContent = item.category;
+    li.textContent = item.thumbnailUrl;
+    li.textContent = item.updatedAt;
+    li.textContent = item.createdAt;
 
     listContainer.appendChild(li);
 
+    displayList(currentPage , totalPages , maxVisiblePages = 1);
+
+    
     //other data
-
-
- document.getElementById('prev-btn').dispatchEvent = currentPage === 1;
-
-    document.getElementById('next-btn').disabled = currentPage === totalPages;
-
   });
+
+  document.getElementById("prev-btn").dispatchEvent = currentPage === 1;
+
+  document.getElementById("next-btn").disabled = currentPage === totalPages;
 };
+
 searchForm.addEventListener("submit", searchImage);
 
 
-
-  //pagination
-
+function displayList(currentPage , totalPages , maxVisiblePages =10){
+ const pagenationData= getPage(currentPage , totalPages ,maxVisiblePages );
+    const pageNumbers = document.querySelector("#page-numbers");
  
- 
+    pageNumbers.innerHTML="";
 
-hasPreviousBtn.addEventListener("click" , ()=>{
-  if( currentPage > 1){
+    pagenationData.pages.forEach( (page) => {
+      const btn = document.createElement("button");
+      btn.innerText = page;
+
+       btn.classList.toggle('active', page === currentPage);
+        
+        btn.addEventListener('click', () => {
+            currentPage = page;
+            renderUI();
+        });
+        pageNumbers.appendChild(btn);
+    });
+}
+
+
+
+//get search response page function
+function getPage(currentPage, totalPages, maxVisiblePages = 10) {
+  let startPage, endPage;
+
+  if (totalPages <= maxVisiblePages) {
+    startPage = 1;
+    endPage = totalPages;
+  } else { 
+    let maxPageBeforeCurrentPage = Math.floor(maxVisiblePages) / 2;
+    let maxPageAfterCurrentPage = Math.ceil(maxVisiblePages) / 2 - 1;
+
+    if (currentPage <= maxPageBeforeCurrentPage) {
+      startPage = 1;
+      endPage = maxVisiblePages;
+    } else if (currentPage + maxPageAfterCurrentPage >= totalPages) {
+       startPage = totalPages - maxVisiblePages + 1;
+      endPage = totalPages;
+    } else {
+       startPage = currentPage - maxPageBeforeCurrentPage;
+      endPage = currentPage + maxPageAfterCurrentPage;
+    }
+  }
+}
+
+//pagination
+
+hasPreviousBtn.addEventListener("click", () => {
+  if (currentPage > 1) {
     currentPage--;
 
     searchImage();
-
   }
+});
 
-})
-
-hasNextBtn.addEventListener("click" , ()=>{
-  if( currentPage < 1){
+hasNextBtn.addEventListener("click", () => {
+  if (currentPage < 1) {
     currentPage++;
 
     searchImage();
-
   }
-  });
-
- 
+});
