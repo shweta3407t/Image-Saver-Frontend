@@ -81,7 +81,7 @@ margin-right: 10px;
 }
 
 #searchForm{
-     display: flex;
+      display: flex;
   justify-content:  left;
   flex-wrap: wrap;
   flex-direction: column;
@@ -120,6 +120,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
- 
+
+/* .hide{
+  visibility: none;
+}
+  */
 
 

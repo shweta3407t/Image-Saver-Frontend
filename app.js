@@ -24,33 +24,42 @@ let uploadImage = async (event) => {
   uploadBox.append(responseParagraph);
 };
 
-uploadForm.addEventListener("submit", uploadImage);
+// uploadForm.addEventListener("submit", uploadImage);
 
 //serach
+
 
 const searchBox = document.querySelector(".searchBox");
 
 const searchForm = document.querySelector("#searchForm");
- 
 
-const keyword = document.querySelector("#keyword").value;
+ 
 
 const hasPreviousBtn = document.querySelector("#prev-btn");
 const hasNextBtn = document.querySelector("#next-btn");
 
-const page = 0;
+// const page = 0;
 
 let currentPage = 1;
 let totalPages = 0;
-let itemLimit = 10;
+let itemLimit = 5;
 let hasPrevious;
 let hasNext;
 
-let searchImage = async ( event ) => {
-    
-   if (event) event.preventDefault();
 
-  url = `http://localhost:8080/api/image/search?keyword=${encodeURIComponent(keyword)}&page=${page}`;
+ let li = document.createElement("li");
+   
+    
+    let thumbnailUrl ;
+
+  let imageButton = document.createElement("button");
+
+let searchImage = async (event) => {
+  if (event) event.preventDefault();
+
+  const keyword = document.querySelector("#keyword").value;
+
+  url = `http://localhost:8080/api/image/search?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
 
   const response = await fetch(url);
 
@@ -65,54 +74,102 @@ let searchImage = async ( event ) => {
   hasPrevious = data.hasPrevious;
   hasNext = data.hasNext;
 
+  
 
-const listContainer = document.createElement("ol");
+  const listContainer = document.getElementById("results-list");
+  listContainer.innerHTML = "";
+
+
+   if (content.length === 0) {
+      listContainer.innerHTML = "<li>No results found.</li>";
+      return;
+    }
+
 
   content.forEach((item) => {
-    //content
-
-    let li = document.createElement("li");
-
-    li.textContent = item.id;
-    listContainer.appendChild(li);
-
-    li.textContent = item.title;
-    listContainer.appendChild(li);
-
-    li.textContent = item.tag;
-    listContainer.appendChild(li);
-
-    li.textContent = item.category;
-    listContainer.appendChild(li);
-
-    li.textContent = item.thumbnailUrl;
-    listContainer.appendChild(li);
-
-    li.textContent = item.updatedAt;
-    listContainer.appendChild(li);
-
-    li.textContent = item.createdAt;
-    listContainer.appendChild(li);
-
-    listContainer.appendChild(li);
-
-
 
     
-    displayList(currentPage, totalPages, itemLimit);
-     
+    //content
 
-    //other data
+      li = document.createElement("li");
+      imageButton = document.createElement("button");
+
+    imageButton.textContent =("Title : " +item.title )  ;
+    li.appendChild(imageButton);
+
+    const id = document.createElement("li");
+    id.textContent =  ("Id : " +item.id);
+    li.appendChild(id);
+
+    const description = document.createElement("li");
+    description.textContent = ("Description : " +item.description);
+    li.appendChild(description);
+
+    const tag = document.createElement("li");
+    tag.textContent =  ("Tag : " +item.tag);
+    li.appendChild(tag);
+
+    const category = document.createElement("li");
+    category.textContent =  ("Categpry : " +item.category);
+    li.appendChild(category);
+
+   
+    thumbnailUrl  =  item.thumbnailUrl;
+    
+
+       const createdAt = document.createElement("li");
+     createdAt.textContent =  ("CreatedAt : " +item.createdAt);
+      li.appendChild(createdAt);
+
+       const updatedAt = document.createElement("li");
+     updatedAt.textContent =  ("UpdatedAt : " +item.updatedAt);
+      li.appendChild(updatedAt);
+
+ 
+
+    listContainer.appendChild(li);
+
+     
   });
 
-  document.getElementById("prev-btn").dispatchEvent = currentPage === 1;
+  displayList(currentPage, totalPages,   itemLimit);
 
-  document.getElementById("next-btn").disabled = currentPage === totalPages;
+
+  hasPreviousBtn.disabled = !hasPrevious;
+hasNextBtn.disabled = !hasNext;
 };
+
+let myImage =  document.getElementById('myImage');
+myImage.classList.add("hide");
+
+
+ let displayImage = async ( ) =>{
+
+   
+
+  const  image = await fetch(thumbnailUrl);
+
+  const imageBlob=await image.blob();
+
+  const objectURL = URL.createObjectURL(imageBlob);
+    
+    myImage.src = objectURL;
+    myImage.classList.remove("hide");
+
+
+  //to remove image from memory 
+     myImage.onload = () => {
+      URL.revokeObjectURL(objectURL);
+    };
+}
+
+imageButton.addEventListener("click" , displayImage)
+
+
 
 searchForm.addEventListener("submit", searchImage);
 
-function displayList(currentPage, totalPages, maxVisiblePages = 10) {
+function displayList(currentPage, totalPages, maxVisiblePages = 5) {
   const pagenationData = getPage(currentPage, totalPages, maxVisiblePages);
   const pageNumbers = document.querySelector("#page-numbers");
 
@@ -126,14 +183,14 @@ function displayList(currentPage, totalPages, maxVisiblePages = 10) {
 
     btn.addEventListener("click", () => {
       currentPage = page;
-      renderUI();
+      searchImage();
     });
     pageNumbers.appendChild(btn);
   });
 }
 
 //get search response page function
-function getPage(currentPage, totalPages, maxVisiblePages = 10) {
+function getPage(currentPage, totalPages, maxVisiblePages = 5) {
   let startPage, endPage;
 
   if (totalPages <= maxVisiblePages) {
@@ -141,7 +198,7 @@ function getPage(currentPage, totalPages, maxVisiblePages = 10) {
     endPage = totalPages;
   } else {
     let maxPageBeforeCurrentPage = Math.floor(maxVisiblePages) / 2;
-    let maxPageAfterCurrentPage = Math.ceil(maxVisiblePages) / 2 - 1;
+    let maxPageAfterCurrentPage = Math.ceil(maxVisiblePages / 2 )- 1;
 
     if (currentPage <= maxPageBeforeCurrentPage) {
       startPage = 1;
@@ -172,15 +229,14 @@ function getPage(currentPage, totalPages, maxVisiblePages = 10) {
 //pagination
 
 hasPreviousBtn.addEventListener("click", () => {
-  if (currentPage > 1) {
+  if (hasPrevious) {
     currentPage--;
-    searchImage();
+   searchImage();
   }
 });
 
 hasNextBtn.addEventListener("click", () => {
-  if (currentPage < 1) {
+  if (hasNext) {
     currentPage++;
-    searchImage();
-  }
+searchImage(); }
 });
