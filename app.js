@@ -49,8 +49,14 @@ let thumbnailUrl;
 
 let imageButton = document.createElement("button");
 
+const listContainer = document.getElementById("results-list");
+listContainer.innerHTML = "";
+
+const singleImageDataList = document.createElement("ol");
+singleImageDataList.innerHTML = "";
+
 let searchImage = async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
   const keyword = document.querySelector("#keyword").value;
 
@@ -69,109 +75,163 @@ let searchImage = async (event) => {
   hasPrevious = data.hasPrevious;
   hasNext = data.hasNext;
 
-  const listContainer = document.getElementById("results-list");
-  listContainer.innerHTML = "";
+  // const listContainer = document.getElementById("results-list");
+  // listContainer.innerHTML = "";
 
-   
+  // const singleImageDataList = document.createElement("ol");
+  //   singleImageDataList.innerHTML = "";
 
   content.forEach((item) => {
-
-
     //content
 
     li = document.createElement("li");
-    imageButton = document.createElement("button");
 
+    //title
+    imageButton = document.createElement("button");
     imageButton.textContent = "Title : " + item.title;
     li.appendChild(imageButton);
 
-    imageButton.addEventListener("click" , displayImage);
-
+    //id
     const id = document.createElement("li");
     id.textContent = "Id : " + item.id;
     li.appendChild(id);
 
+    //description
     const description = document.createElement("li");
     description.textContent = "Description : " + item.description;
     li.appendChild(description);
 
+    //tag
     const tag = document.createElement("li");
     tag.textContent = "Tag : " + item.tag;
     li.appendChild(tag);
 
+    //category
     const category = document.createElement("li");
     category.textContent = "Categpry : " + item.category;
     li.appendChild(category);
 
+    //thumbnail
     thumbnailUrl = item.thumbnailUrl;
 
+    //reate
     const createdAt = document.createElement("li");
     createdAt.textContent = "CreatedAt : " + item.createdAt;
     li.appendChild(createdAt);
 
+    //update
     const updatedAt = document.createElement("li");
     updatedAt.textContent = "UpdatedAt : " + item.updatedAt;
     li.appendChild(updatedAt);
 
-    listContainer.appendChild(li);
+    //image
+    let displayImage = async () => {
+      // fetch image
+      let url = `http://localhost:8080/api/image/download/${encodeURIComponent(thumbnailUrl)}`;
 
+      const response = await fetch(url);
 
+      const blobImage = await response.blob();
+      const localUrl = URL.createObjectURL(blobImage);
 
+      // const imgElement = document.getElementById("myImage");
+      // imgElement.src = localUrl;
+
+      //create div
+
+      const imageDiv = document.createElement("div");
+      imageDiv.classList.add("imageDiv");
+      // imageDiv.classList.add("hide");
+
+      //img
+      const img = document.createElement("img");
+
+      img.id("myImage");
+      img.classList.add("image");
+      img.src = localUrl;
+
+      imageDiv.appendChild(img);
+
+      // // //create list item
+      //   const li = document.createElement("li");
+      //   li.appendChild(imageDiv);
+
+      //append
+      singleImageDataList.appendChild(imageDiv);
+
+      listContainer.appendChild(singleImageDataList);
+
+      //
+    };
+
+    imageButton.addEventListener("click", displayImage);
+
+    //append
+    singleImageDataList.appendChild(li);
+
+    listContainer.appendChild(singleImageDataList);
   });
 
   // displayList(currentPage, totalPages, itemLimit);
 
-   
   hasPrevious.dispatchEvent = currentPage === 1;
-   hasNext.disabled = currentPage === totalPages;
-
-    
+  hasNext.disabled = currentPage === totalPages;
 };
 
+///
 
+///
 
+// imageDiv.classList.add("hide");
 
-const imageDiv=document.querySelector(".imageDiv");
+// let displayImage = async () => {
+//   // fetch image
+//   let url = `http://localhost:8080/api/image/download/${encodeURIComponent(thumbnailUrl)}`;
 
-imageDiv.classList.add("hide");
+//   const response = await fetch(url);
 
- 
+//   const blobImage = await response.blob();
+//   const localUrl = URL.createObjectURL(blobImage);
 
-let displayImage = async () => {
+//   // const imgElement = document.getElementById("myImage");
+//   // imgElement.src = localUrl;
 
-  let url = `http://localhost:8080/api/image/download/${encodeURIComponent(thumbnailUrl)}`;
+//   //create div
 
-  const response = await fetch(url);
+//   const imageDiv = document.createElement("div");
+//   imageDiv.classList.add("imageDiv");
+//   // imageDiv.classList.add("hide");
 
-  const blobImage = await response.blob();
-  const localUrl = URL.createObjectURL(blobImage);
+//   //img
+//   const img = imageDiv.appendChild("img");
+//   img.id("myImage");
+//   img.classList.add("image");
+//   img.src=localUrl;
 
-     const imgElement = document.getElementById('myImage');
-    imgElement.src = localUrl;
+//   // // //create list item
+//   //   const li = document.createElement("li");
+//   //   li.appendChild(imageDiv);
 
-    imageDiv.classList.remove("hide");
+//   //append
+//   singleImageDataList.appendChild(imageDiv);
 
+//   //
 
-  
-};
+// };
 
-imageButton.addEventListener("click", displayImage);
+// imageButton.addEventListener("click", displayImage);
 
-
- 
-searchForm.addEventListener("submit", (event)=>{
-  currentPage-1;
+searchForm.addEventListener("submit", (event) => {
+  currentPage - 1;
   searchImage(event);
 });
-
-
 
 function displayList(currentPage, totalPages, maxVisiblePages = 10) {
   console.log("displayList  call");
   const pagenationData = getPage(currentPage, totalPages, maxVisiblePages);
   const pageNumbers = document.getElementById("page-numbers");
 
-  pageNumbers.innerHTML ="";
+  pageNumbers.innerHTML = "";
 
   pagenationData.pages.forEach((page) => {
     const btn = document.createElement("button");
@@ -189,10 +249,7 @@ function displayList(currentPage, totalPages, maxVisiblePages = 10) {
   hasPreviousBtn.dispatchEvent = !hasPrevious;
   hasNextBtn.disabled = !hasNext;
 
-
-
   console.log("display exit");
- 
 }
 
 //get search response page function
@@ -238,21 +295,14 @@ hasPreviousBtn.addEventListener("click", () => {
   console.log("previous call");
   if (currentPage > 1) {
     currentPage--;
-     displayList(currentPage , totalPages , 10 );
-   }
-
+    displayList(currentPage, totalPages, 10);
+  }
 });
 
 hasNextBtn.addEventListener("click", () => {
   console.log("next call");
   if (currentPage < totalPages) {
     currentPage++;
-         displayList(currentPage , totalPages , 10 );
-
-    
+    displayList(currentPage, totalPages, 10);
   }
-
-  
 });
-
-
