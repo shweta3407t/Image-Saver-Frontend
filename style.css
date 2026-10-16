@@ -150,7 +150,7 @@ button.active {
  
 
  
-/* 
+
 button:disabled {
   background-color: #ccc;
   color: #666;
@@ -188,7 +188,7 @@ button:disabled {
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
-}
+} 
 
 
 

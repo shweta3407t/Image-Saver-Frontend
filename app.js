@@ -38,8 +38,8 @@ const hasNextBtn = document.querySelector("#next-btn");
 
 const page = 0;
 
-let currentPage=0 ;
-let totalPages =0;
+let currentPage= default 0;
+let totalPages ;
 let itemLimit =10;
 let hasPrevious =false;
 let hasNext  = false;
@@ -55,7 +55,7 @@ const listContainer = document.getElementById("results-list");
 const singleImageDataList = document.createElement("ol");
  
 
-async function searchImage( ) {
+async function searchImage(currentPage ) {
   // event.preventDefault();
 
   listContainer.innerHTML = "";
@@ -73,10 +73,10 @@ async function searchImage( ) {
   const content = data.content;
   currentPage = Number(data.currentPage);
   totalPages = Number(data.totalPages);
-  const totalElements = data.totalElements;
-  itemLimit = data.itemLimit;
-  hasPrevious = data.hasPrevious;
-  hasNext = data.hasNext;
+  // const totalElements = data.totalElements;
+  itemLimit = Number(data.itemLimit);
+  hasPrevious =Boolean(data.hasPrevious);
+  hasNext = Boolean( data.hasNext);
 
  
 
@@ -89,32 +89,27 @@ async function searchImage( ) {
     imageButton = document.createElement("button");
     imageButton.textContent = "Title : " + item.title;
     li.appendChild(imageButton);
-    singleImageDataList.appendChild(li);
-
+ 
     //id
     const id = document.createElement("li");
     id.textContent = "Id : " + item.id;
     li.appendChild(id);
-     singleImageDataList.appendChild(li);
-
+ 
     //description
     const description = document.createElement("li");
     description.textContent = "Description : " + item.description;
     li.appendChild(description);
-     singleImageDataList.appendChild(li);
-
+ 
     //tag
     const tag = document.createElement("li");
     tag.textContent = "Tag : " + item.tag;
     li.appendChild(tag);
-     singleImageDataList.appendChild(li);
-
+ 
     //category
     const category = document.createElement("li");
     category.textContent = "Categpry : " + item.category;
     li.appendChild(category);
-     singleImageDataList.appendChild(li);
-
+ 
     //thumbnail
     thumbnailUrl = item.thumbnailUrl;
 
@@ -122,14 +117,12 @@ async function searchImage( ) {
     const createdAt = document.createElement("li");
     createdAt.textContent = "CreatedAt : " + item.createdAt;
     li.appendChild(createdAt);
-     singleImageDataList.appendChild(li);
-
+ 
     //update
     const updatedAt = document.createElement("li");
     updatedAt.textContent = "UpdatedAt : " + item.updatedAt;
     li.appendChild(updatedAt);
-     singleImageDataList.appendChild(li);
-
+ 
     //image
 
     const imageItem = document.createElement("li");
@@ -180,12 +173,12 @@ async function searchImage( ) {
 
     singleImageDataList.appendChild(li);
 
-    listContainer.appendChild(singleImageDataList);
-
+     
 
   });
 
- 
+ listContainer.appendChild(singleImageDataList);
+
 
   displayList(currentPage , totalPages , 10);
 
@@ -218,9 +211,6 @@ function displayList(currentPage, totalPages, maxVisiblePages = 10) {
   hasNextBtn.disabled = currentPage >= totalPages - 1;
 
     if (totalPages <= 0) return;
-
-
-
 
   const pagenationData = getPage(currentPage, totalPages, maxVisiblePages);
  
@@ -297,16 +287,16 @@ if (totalPages <= 0) {
 //pagination
 
 hasPreviousBtn.addEventListener("click", (event) => {
-   if ( currentPage > 0) {
+   if (hasPrevious && currentPage > 0) {
     currentPage--;
-    searchImage();
+    searchImage(currentPage);
    }
 });
 
 hasNextBtn.addEventListener("click", (event) => {
-   if ( currentPage < totalPages - 1  ) {
+   if ( hasNext && currentPage < totalPages - 1  ) {
     currentPage++;
-    searchImage();
+    searchImage(currentPage);
    }
 });
 
