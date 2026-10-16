@@ -1,6 +1,6 @@
 let url;
-//upload
 
+// ==================== UPLOAD SEARCH ====================
 let uploadBox = document.querySelector(".uploadBox");
 
 const uploadForm = document.querySelector("#uploadForm");
@@ -24,9 +24,10 @@ let uploadImage = async (event) => {
   uploadBox.append(responseParagraph);
 };
 
-// uploadForm.addEventListener("submit", uploadImage);
+uploadForm.addEventListener("submit", uploadImage);
 
-//serach
+
+// ==================== IMAGE SEARCH ====================
 
 const searchBox = document.querySelector(".searchBox");
 
@@ -37,11 +38,11 @@ const hasNextBtn = document.querySelector("#next-btn");
 
 const page = 0;
 
-let currentPage = 1;
-let totalPages = 0;
-let itemLimit = 10;
-let hasPrevious;
-let hasNext;
+let currentPage=0 ;
+let totalPages =0;
+let itemLimit =10;
+let hasPrevious =false;
+let hasNext  = false;
 
 let li = document.createElement("li");
 
@@ -50,13 +51,15 @@ let thumbnailUrl;
 let imageButton = document.createElement("button");
 
 const listContainer = document.getElementById("results-list");
-listContainer.innerHTML = "";
-
+ 
 const singleImageDataList = document.createElement("ol");
-singleImageDataList.innerHTML = "";
+ 
 
-let searchImage = async (event) => {
-  event.preventDefault();
+async function searchImage( ) {
+  // event.preventDefault();
+
+  listContainer.innerHTML = "";
+  singleImageDataList.innerHTML = "";
 
   const keyword = document.querySelector("#keyword").value;
 
@@ -68,18 +71,14 @@ let searchImage = async (event) => {
   console.log(data);
 
   const content = data.content;
-  currentPage = data.currentPage;
-  totalPages = data.totalPages;
+  currentPage = Number(data.currentPage);
+  totalPages = Number(data.totalPages);
   const totalElements = data.totalElements;
   itemLimit = data.itemLimit;
   hasPrevious = data.hasPrevious;
   hasNext = data.hasNext;
 
-  // const listContainer = document.getElementById("results-list");
-  // listContainer.innerHTML = "";
-
-  // const singleImageDataList = document.createElement("ol");
-  //   singleImageDataList.innerHTML = "";
+ 
 
   content.forEach((item) => {
     //content
@@ -90,26 +89,31 @@ let searchImage = async (event) => {
     imageButton = document.createElement("button");
     imageButton.textContent = "Title : " + item.title;
     li.appendChild(imageButton);
+    singleImageDataList.appendChild(li);
 
     //id
     const id = document.createElement("li");
     id.textContent = "Id : " + item.id;
     li.appendChild(id);
+     singleImageDataList.appendChild(li);
 
     //description
     const description = document.createElement("li");
     description.textContent = "Description : " + item.description;
     li.appendChild(description);
+     singleImageDataList.appendChild(li);
 
     //tag
     const tag = document.createElement("li");
     tag.textContent = "Tag : " + item.tag;
     li.appendChild(tag);
+     singleImageDataList.appendChild(li);
 
     //category
     const category = document.createElement("li");
     category.textContent = "Categpry : " + item.category;
     li.appendChild(category);
+     singleImageDataList.appendChild(li);
 
     //thumbnail
     thumbnailUrl = item.thumbnailUrl;
@@ -118,157 +122,158 @@ let searchImage = async (event) => {
     const createdAt = document.createElement("li");
     createdAt.textContent = "CreatedAt : " + item.createdAt;
     li.appendChild(createdAt);
+     singleImageDataList.appendChild(li);
 
     //update
     const updatedAt = document.createElement("li");
     updatedAt.textContent = "UpdatedAt : " + item.updatedAt;
     li.appendChild(updatedAt);
+     singleImageDataList.appendChild(li);
 
     //image
-    let displayImage = async () => {
-      // fetch image
+
+    const imageItem = document.createElement("li");
+    imageItem.classList.add("image-item");
+
+    singleImageDataList.appendChild(imageItem);
+
+    let imageVisible = false;
+    let objectUrl = null;
+
+    //async function
+    imageButton.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (imageVisible) {
+        imageItem.innerHTML = "";
+        imageVisible = false;
+
+        if (objectUrl) {
+          URL.revokeObjectURL(objectUrl);
+          objectUrl = null;
+        }
+        return;
+      }
+
+      imageItem.textContent = "loading image...";
+
       let url = `http://localhost:8080/api/image/download/${encodeURIComponent(thumbnailUrl)}`;
 
       const response = await fetch(url);
 
       const blobImage = await response.blob();
-      const localUrl = URL.createObjectURL(blobImage);
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+      objectUrl = URL.createObjectURL(blobImage);
 
-      // const imgElement = document.getElementById("myImage");
-      // imgElement.src = localUrl;
-
-      //create div
-
-      const imageDiv = document.createElement("div");
-      imageDiv.classList.add("imageDiv");
-      // imageDiv.classList.add("hide");
-
-      //img
       const img = document.createElement("img");
-
-      img.id("myImage");
+      img.alt = item.title || "Image";
       img.classList.add("image");
-      img.src = localUrl;
+      img.src = objectUrl;
 
-      imageDiv.appendChild(img);
+      imageItem.innerHTML = "";
+      imageItem.appendChild(img);
+      imageVisible = true;
+    });
 
-      // // //create list item
-      //   const li = document.createElement("li");
-      //   li.appendChild(imageDiv);
-
-      //append
-      singleImageDataList.appendChild(imageDiv);
-
-      listContainer.appendChild(singleImageDataList);
-
-      //
-    };
-
-    imageButton.addEventListener("click", displayImage);
-
-    //append
     singleImageDataList.appendChild(li);
 
     listContainer.appendChild(singleImageDataList);
+
+
   });
 
-  // displayList(currentPage, totalPages, itemLimit);
+ 
 
-  hasPrevious.dispatchEvent = currentPage === 1;
-  hasNext.disabled = currentPage === totalPages;
-};
+  displayList(currentPage , totalPages , 10);
 
-///
+  hasPreviousBtn.disabled = currentPage === 0;
+hasNextBtn.disabled = currentPage >= totalPages - 1;
 
-///
+  
+}
 
-// imageDiv.classList.add("hide");
 
-// let displayImage = async () => {
-//   // fetch image
-//   let url = `http://localhost:8080/api/image/download/${encodeURIComponent(thumbnailUrl)}`;
 
-//   const response = await fetch(url);
+// ==================== SEARCH FORM LISTENER ====================
 
-//   const blobImage = await response.blob();
-//   const localUrl = URL.createObjectURL(blobImage);
 
-//   // const imgElement = document.getElementById("myImage");
-//   // imgElement.src = localUrl;
-
-//   //create div
-
-//   const imageDiv = document.createElement("div");
-//   imageDiv.classList.add("imageDiv");
-//   // imageDiv.classList.add("hide");
-
-//   //img
-//   const img = imageDiv.appendChild("img");
-//   img.id("myImage");
-//   img.classList.add("image");
-//   img.src=localUrl;
-
-//   // // //create list item
-//   //   const li = document.createElement("li");
-//   //   li.appendChild(imageDiv);
-
-//   //append
-//   singleImageDataList.appendChild(imageDiv);
-
-//   //
-
-// };
-
-// imageButton.addEventListener("click", displayImage);
 
 searchForm.addEventListener("submit", (event) => {
-  currentPage - 1;
-  searchImage(event);
+  event.preventDefault();
+  currentPage = 0;
+  searchImage();
 });
+// ==================== PAGINATION DISPLAY ====================
 
+ 
 function displayList(currentPage, totalPages, maxVisiblePages = 10) {
-  console.log("displayList  call");
-  const pagenationData = getPage(currentPage, totalPages, maxVisiblePages);
-  const pageNumbers = document.getElementById("page-numbers");
-
+ const pageNumbers = document.getElementById("page-numbers");
   pageNumbers.innerHTML = "";
 
-  pagenationData.pages.forEach((page) => {
-    const btn = document.createElement("button");
-    btn.innerText = page;
+  // Disable buttons based on the current page
+  hasPreviousBtn.disabled = currentPage === 0;
+  hasNextBtn.disabled = currentPage >= totalPages - 1;
 
+    if (totalPages <= 0) return;
+
+
+
+
+  const pagenationData = getPage(currentPage, totalPages, maxVisiblePages);
+ 
+ 
+  pagenationData.pages.forEach((page) => {
+     const btn = document.createElement("button");
+
+
+    btn.textContent = page;
+    btn.type = "button";
     btn.classList.toggle("active", page === currentPage);
 
     btn.addEventListener("click", () => {
       currentPage = page;
-      searchImage(currentPage);
+      searchImage();
     });
     pageNumbers.appendChild(btn);
   });
 
-  hasPreviousBtn.dispatchEvent = !hasPrevious;
-  hasNextBtn.disabled = !hasNext;
+ 
+ }
 
-  console.log("display exit");
-}
 
 //get search response page function
 function getPage(currentPage, totalPages, maxVisiblePages = 10) {
+
+
+if (totalPages <= 0) {
+    return {
+      currentPage,
+      totalPages,
+      startPage: 0,
+      endPage: -1,
+      pages: [],
+    };
+  }
+
+
   let startPage, endPage;
 
   if (totalPages <= maxVisiblePages) {
-    startPage = 1;
-    endPage = totalPages;
+    startPage = 0;
+    endPage = totalPages-1;
   } else {
     let maxPageBeforeCurrentPage = Math.floor(maxVisiblePages / 2);
     let maxPageAfterCurrentPage = Math.ceil(maxVisiblePages / 2) - 1;
 
     if (currentPage <= maxPageBeforeCurrentPage) {
-      startPage = 1;
-      endPage = maxVisiblePages;
-    } else if (currentPage + maxPageAfterCurrentPage >= totalPages) {
-      startPage = totalPages - maxVisiblePages + 1;
-      endPage = totalPages;
+      startPage = 0;
+      endPage = maxVisiblePages - 1;
+    } else if (currentPage + maxPageAfterCurrentPage >= totalPages-1) {
+      startPage = totalPages - maxVisiblePages ;
+      endPage = totalPages-1;
     } else {
       startPage = currentPage - maxPageBeforeCurrentPage;
       endPage = currentPage + maxPageAfterCurrentPage;
@@ -291,18 +296,18 @@ function getPage(currentPage, totalPages, maxVisiblePages = 10) {
 
 //pagination
 
-hasPreviousBtn.addEventListener("click", () => {
-  console.log("previous call");
-  if (currentPage > 1) {
+hasPreviousBtn.addEventListener("click", (event) => {
+   if ( currentPage > 0) {
     currentPage--;
-    displayList(currentPage, totalPages, 10);
-  }
+    searchImage();
+   }
 });
 
-hasNextBtn.addEventListener("click", () => {
-  console.log("next call");
-  if (currentPage < totalPages) {
+hasNextBtn.addEventListener("click", (event) => {
+   if ( currentPage < totalPages - 1  ) {
     currentPage++;
-    displayList(currentPage, totalPages, 10);
-  }
+    searchImage();
+   }
 });
+
+ 
