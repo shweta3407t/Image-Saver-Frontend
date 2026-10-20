@@ -1,5 +1,3 @@
-let url;
-
 // ==================== UPLOAD SEARCH ====================
 let uploadBox = document.querySelector(".uploadBox");
 
@@ -9,7 +7,7 @@ let uploadImage = async (event) => {
   event.preventDefault();
   const formData = new FormData(uploadForm);
 
-  url = "http://localhost:8080/api/image/upload";
+  let url = "http://localhost:8080/api/image/upload";
 
   let response = await fetch(url, {
     method: "post",
@@ -26,7 +24,6 @@ let uploadImage = async (event) => {
 
 uploadForm.addEventListener("submit", uploadImage);
 
-
 // ==================== IMAGE SEARCH ====================
 
 const searchBox = document.querySelector(".searchBox");
@@ -38,35 +35,38 @@ const hasNextBtn = document.querySelector("#next-btn");
 
 const page = 0;
 
-let currentPage= 0;
-let totalPages ;
-let itemLimit =10;
-let hasPrevious =false;
-let hasNext  = false;
+let currentPage;
+let totalPages;
+let itemLimit = 10;
+let hasPrevious = false;
+let hasNext = false;
 
 let li = document.createElement("li");
-
-let thumbnailUrl;
 
 let imageButton = document.createElement("button");
 
 const listContainer = document.getElementById("results-list");
- 
+
 const singleImageDataList = document.createElement("ol");
- 
 
-async function searchImage(currentPage ) {
+async function searchImage(currentPage) {
   // event.preventDefault();
-
-   const formData = new FormData(searchForm);
-
 
   listContainer.innerHTML = "";
   singleImageDataList.innerHTML = "";
 
   const keyword = document.querySelector("#keyword").value;
 
-  url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
+  let url;
+  if (keyword) {
+    url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
+  } else {
+    url = `http://localhost:8080/api/image/search`;
+  }
+
+  // //let  url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
+
+  //   let url = `http://localhost:8080/api/image/search`;
 
   const response = await fetch(url);
 
@@ -74,14 +74,14 @@ async function searchImage(currentPage ) {
   console.log(data);
 
   const content = data.content;
-  currentPage = Number(data.currentPage);
+  // currentPage = Number(data.currentPage);
   totalPages = Number(data.totalPages);
-  // const totalElements = data.totalElements;
+  // totalElements = data.totalElements;
   itemLimit = Number(data.itemLimit);
-  hasPrevious =Boolean(data.hasPrevious);
-  hasNext = Boolean( data.hasNext);
+  hasPrevious = Boolean(data.hasPrevious);
+  hasNext = Boolean(data.hasNext);
 
- 
+  let thumbnailUrl;
 
   content.forEach((item) => {
     //content
@@ -90,42 +90,47 @@ async function searchImage(currentPage ) {
 
     //title
     imageButton = document.createElement("button");
+
     imageButton.textContent = "Title : " + item.title;
     li.appendChild(imageButton);
- 
+
     //id
     const id = document.createElement("li");
     id.textContent = "Id : " + item.id;
     li.appendChild(id);
- 
-    //description
-    const description = document.createElement("li");
-    description.textContent = "Description : " + item.description;
-    li.appendChild(description);
- 
+
     //tag
     const tag = document.createElement("li");
     tag.textContent = "Tag : " + item.tag;
     li.appendChild(tag);
- 
+
     //category
     const category = document.createElement("li");
     category.textContent = "Categpry : " + item.category;
     li.appendChild(category);
- 
-    //thumbnail
+
+    //description
+    const description = document.createElement("li");
+    description.textContent = "Description : " + item.description;
+    li.appendChild(description);
+
+    //thummbnail
+    const thumbnail = document.createElement("li");
+    thumbnail.textContent = "thumbnailUrl : " + item.thumbnailUrl;
+    li.appendChild(thumbnail);
+
     thumbnailUrl = item.thumbnailUrl;
 
-    //reate
+    //create
     const createdAt = document.createElement("li");
     createdAt.textContent = "CreatedAt : " + item.createdAt;
     li.appendChild(createdAt);
- 
+
     //update
     const updatedAt = document.createElement("li");
     updatedAt.textContent = "UpdatedAt : " + item.updatedAt;
     li.appendChild(updatedAt);
- 
+
     //image
 
     const imageItem = document.createElement("li");
@@ -175,27 +180,17 @@ async function searchImage(currentPage ) {
     });
 
     singleImageDataList.appendChild(li);
-
-     
-
   });
 
- listContainer.appendChild(singleImageDataList);
+  listContainer.appendChild(singleImageDataList);
 
-
-  displayList(currentPage , totalPages , 10);
+  displayList(currentPage, totalPages, 10);
 
   hasPreviousBtn.disabled = currentPage === 0;
-hasNextBtn.disabled = currentPage >= totalPages - 1;
-
-  
+  hasNextBtn.disabled = currentPage >= totalPages - 1;
 }
 
-
-
 // ==================== SEARCH FORM LISTENER ====================
-
-
 
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -204,23 +199,20 @@ searchForm.addEventListener("submit", (event) => {
 });
 // ==================== PAGINATION DISPLAY ====================
 
- 
 function displayList(currentPage, totalPages, maxVisiblePages = 10) {
- const pageNumbers = document.getElementById("page-numbers");
+  const pageNumbers = document.getElementById("page-numbers");
   pageNumbers.innerHTML = "";
 
   // Disable buttons based on the current page
   hasPreviousBtn.disabled = currentPage === 0;
   hasNextBtn.disabled = currentPage >= totalPages - 1;
 
-    if (totalPages <= 0) return;
+  if (totalPages <= 0) return;
 
   const pagenationData = getPage(currentPage, totalPages, maxVisiblePages);
- 
- 
-  pagenationData.pages.forEach((page) => {
-     const btn = document.createElement("button");
 
+  pagenationData.pages.forEach((page) => {
+    const btn = document.createElement("button");
 
     btn.textContent = page;
     btn.type = "button";
@@ -232,16 +224,11 @@ function displayList(currentPage, totalPages, maxVisiblePages = 10) {
     });
     pageNumbers.appendChild(btn);
   });
-
- 
 }
-
 
 //get search response page function
 function getPage(currentPage, totalPages, maxVisiblePages = 10) {
-
-
-if (totalPages <= 0) {
+  if (totalPages <= 0) {
     return {
       currentPage,
       totalPages,
@@ -251,12 +238,11 @@ if (totalPages <= 0) {
     };
   }
 
-
   let startPage, endPage;
 
   if (totalPages <= maxVisiblePages) {
     startPage = 0;
-    endPage = totalPages-1;
+    endPage = totalPages - 1;
   } else {
     let maxPageBeforeCurrentPage = Math.floor(maxVisiblePages / 2);
     let maxPageAfterCurrentPage = Math.ceil(maxVisiblePages / 2) - 1;
@@ -264,9 +250,9 @@ if (totalPages <= 0) {
     if (currentPage <= maxPageBeforeCurrentPage) {
       startPage = 0;
       endPage = maxVisiblePages - 1;
-    } else if (currentPage + maxPageAfterCurrentPage >= totalPages-1) {
-      startPage = totalPages - maxVisiblePages ;
-      endPage = totalPages-1;
+    } else if (currentPage + maxPageAfterCurrentPage >= totalPages - 1) {
+      startPage = totalPages - maxVisiblePages;
+      endPage = totalPages - 1;
     } else {
       startPage = currentPage - maxPageBeforeCurrentPage;
       endPage = currentPage + maxPageAfterCurrentPage;
@@ -287,44 +273,51 @@ if (totalPages <= 0) {
   };
 }
 
-
 //pagination
 
 hasPreviousBtn.addEventListener("click", () => {
-   if (hasPrevious && currentPage > 0) {
+  if (hasPrevious && currentPage > 0) {
     currentPage--;
     searchImage(currentPage);
-   }
+  }
 });
 
 hasNextBtn.addEventListener("click", () => {
-   if ( hasNext && currentPage < totalPages - 1  ) {
+  if (hasNext && currentPage < totalPages - 1) {
     currentPage++;
     searchImage(currentPage);
-   }
+  }
 });
-
- 
 
 // ==================== DELETE 1 SEARCH ====================
 
-const deleteForm = document.querySelector("deleteForm");
+const deleteBox = document.querySelector(".deleteBox");
+const deleteForm = document.querySelector("#deleteForm");
 
+let deleteButton = document.querySelector("#delete");
 
-const deleteButton = document.querySelector("deleteButton");
-const id = deleteButton.value();
-  
+async function deleteImage(event) {
+  event.preventDefault();
+  const formData = new FormData(deleteForm);
 
-async function deleteImage( ) {
+  const id = deleteButton.value;
+
   url = `http://localhost:8080/api/image/delete?id=${encodeURIComponent(id)}`;
-   
 
+  let response = await fetch(url, {
+    method: "delete",
+  });
+
+  let data = await response.text();
+
+  const responseParagraph = document.createElement("p");
+  responseParagraph.textContent = data;
+
+  deleteBox.append(responseParagraph);
 }
-
 
 deleteForm.addEventListener("submit", (event) => {
   event.preventDefault();
-   
-  deleteImage();
-});
 
+  deleteImage(event);
+});
