@@ -38,7 +38,7 @@ const hasNextBtn = document.querySelector("#next-btn");
 
 const page = 0;
 
-let currentPage= default 0;
+let currentPage= 0;
 let totalPages ;
 let itemLimit =10;
 let hasPrevious =false;
@@ -58,12 +58,15 @@ const singleImageDataList = document.createElement("ol");
 async function searchImage(currentPage ) {
   // event.preventDefault();
 
+   const formData = new FormData(searchForm);
+
+
   listContainer.innerHTML = "";
   singleImageDataList.innerHTML = "";
 
   const keyword = document.querySelector("#keyword").value;
 
-  url = `http://localhost:8080/api/image/search?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
+  url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
 
   const response = await fetch(url);
 
@@ -197,7 +200,7 @@ hasNextBtn.disabled = currentPage >= totalPages - 1;
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
   currentPage = 0;
-  searchImage();
+  searchImage(currentPage);
 });
 // ==================== PAGINATION DISPLAY ====================
 
@@ -231,7 +234,7 @@ function displayList(currentPage, totalPages, maxVisiblePages = 10) {
   });
 
  
- }
+}
 
 
 //get search response page function
@@ -284,16 +287,17 @@ if (totalPages <= 0) {
   };
 }
 
+
 //pagination
 
-hasPreviousBtn.addEventListener("click", (event) => {
+hasPreviousBtn.addEventListener("click", () => {
    if (hasPrevious && currentPage > 0) {
     currentPage--;
     searchImage(currentPage);
    }
 });
 
-hasNextBtn.addEventListener("click", (event) => {
+hasNextBtn.addEventListener("click", () => {
    if ( hasNext && currentPage < totalPages - 1  ) {
     currentPage++;
     searchImage(currentPage);
@@ -301,3 +305,26 @@ hasNextBtn.addEventListener("click", (event) => {
 });
 
  
+
+// ==================== DELETE 1 SEARCH ====================
+
+const deleteForm = document.querySelector("deleteForm");
+
+
+const deleteButton = document.querySelector("deleteButton");
+const id = deleteButton.value();
+  
+
+async function deleteImage( ) {
+  url = `http://localhost:8080/api/image/delete?id=${encodeURIComponent(id)}`;
+   
+
+}
+
+
+deleteForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+   
+  deleteImage();
+});
+
