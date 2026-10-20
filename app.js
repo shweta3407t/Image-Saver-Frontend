@@ -64,6 +64,8 @@ async function searchImage(currentPage) {
     url = `http://localhost:8080/api/image/search`;
   }
 
+
+  ///incomplete
   // //let  url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
 
   //   let url = `http://localhost:8080/api/image/search`;
