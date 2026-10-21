@@ -83,26 +83,21 @@ margin-right: 10px;
 
 
 #uploadform{
-     display: flex;
-  justify-content: left;
+     
+  justify-content: center;
   flex-wrap: wrap;
   flex-direction: column;
 }
 
 #updateForm{
-     display: flex;
-  justify-content: left;
+    
+  justify-content: center;
   flex-wrap: wrap;
   flex-direction: column;
 }
 
-/* #searchForm{
-      display: flex;
-  justify-content:  left;
-  flex-wrap: wrap;
-  flex-direction: column;
-} */
-
+ 
+ 
 
 
 .pagination-container{
@@ -159,6 +154,7 @@ button {
   cursor: pointer;
   border: 1px solid #ccc;
   background-color: #fff;
+
 }
 button.active {
   background-color: #4285F4; /* Google Blue */

@@ -10,7 +10,7 @@ let uploadImage = async (event) => {
   let url = "http://localhost:8080/api/image/upload";
 
   let response = await fetch(url, {
-    method: "post",
+    method: "POST",
     body: formData,
   });
 
@@ -299,14 +299,13 @@ let deleteButton = document.querySelector("#delete");
 
 async function deleteImage(event) {
   event.preventDefault();
-  const formData = new FormData(deleteForm);
 
   const id = deleteButton.value;
 
   url = `http://localhost:8080/api/image/delete?id=${encodeURIComponent(id)}`;
 
   let response = await fetch(url, {
-    method: "delete",
+    method: "DELETE",
   });
 
   let data = await response.text();
@@ -323,24 +322,26 @@ deleteForm.addEventListener("submit", (event) => {
   deleteImage(event);
 });
 
-
 // ==================== UPDATE SEARCH ====================
 
 const updateBox = document.querySelector(".updateBox");
 const updateForm = document.querySelector("#updateForm");
 
- 
+// const id = document.querySelector("#id").value;
+
+
 async function updateImage(event) {
   event.preventDefault();
   const formData = new FormData(updateForm);
 
-  
 
-  url = `http://localhost:8080/api/image/update`;
+ 
+
+  url = `http://localhost:8080/api/image/update`; 
 
   let response = await fetch(url, {
-    method: "put",
-    body : formData  ,
+    method: "PUT",
+    body: formData,
   });
 
   let data = await response.text();
