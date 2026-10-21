@@ -12,7 +12,7 @@
     </header>
 
     <div id="container">
-      <div id="firstPage" style="background-color: aqua">
+      <div id="firstPage">
         <div class="uploadBox">
           <h2>Upload Image</h2>
 
@@ -61,7 +61,7 @@
         </div>
         <!-- //search -->
 
-        <div class="searchBox" style="background-color: blue">
+        <div class="searchBox">
           <h2>search Image</h2>
 
           <form id="searchForm">
@@ -88,7 +88,9 @@
           </div>
         </div>
 
-        <div class="deleteBox" style="background-color: chartreuse">
+        <!-- delete -->
+
+        <div class="deleteBox">
           <h2>Delete Image</h2>
 
           <form id="deleteForm">
@@ -100,7 +102,51 @@
                 placeholder="Enter image id to delete image"
               />
             </label>
-            <button id="submitButton">delete</button>
+            <button id="deleteSubmitButton" type="button">Delete</button>
+          </form>
+        </div>
+
+        <!-- //update -->
+
+        <div class="updateBox" style="background-color: burlywood">
+          <h2>Update Image</h2>
+          <form id="updateForm">
+            <label
+              >Id:
+              <input type="text" id="id" placeholder="Enter Image id to update"
+            /></label>
+            <br />
+            <label
+              >Enter new Name :
+              <input
+                type="text"
+                id="name"
+                placeholder="Enter updated name" /></label
+            ><br />
+            <label
+              >Enter new description :
+              <input
+                type="text"
+                id="description"
+                placeholder="Enter updated description" /></label
+            ><br />
+            <label
+              >Enter new tag :
+              <input
+                type="text"
+                id="tag"
+                placeholder="Enter updated tag" /></label
+            ><br />
+
+            <label
+              >Enter new category :
+              <input
+                type="text"
+                id="category"
+                placeholder="Enter updated category" /></label
+            ><br />
+
+            <button id="updateSubmitButton" type="button">Update</button>
           </form>
         </div>
       </div>
@@ -109,4 +155,3 @@
     <script src="app.js"></script>
   </body>
 </html>
- 

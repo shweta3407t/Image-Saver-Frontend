@@ -65,11 +65,22 @@ margin-right: 10px;
    padding-bottom: 10px;
  }
 
+.updateBox{
+
+  display: flex;
+  
+  flex-direction: column;
+  justify-content: center;
+   padding-bottom: 10px;
+ }
+
  .searchBox{
    align-items: center;
   padding-bottom: 10px;
   padding-left: 10px;
  }
+
+
 
 #uploadform{
      display: flex;
@@ -78,12 +89,19 @@ margin-right: 10px;
   flex-direction: column;
 }
 
-#searchForm{
+#updateForm{
+     display: flex;
+  justify-content: left;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+/* #searchForm{
       display: flex;
   justify-content:  left;
   flex-wrap: wrap;
   flex-direction: column;
-}
+} */
 
 
 

@@ -64,7 +64,6 @@ async function searchImage(currentPage) {
     url = `http://localhost:8080/api/image/search`;
   }
 
-
   ///incomplete
   // //let  url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
 
@@ -322,4 +321,38 @@ deleteForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
   deleteImage(event);
+});
+
+
+// ==================== UPDATE SEARCH ====================
+
+const updateBox = document.querySelector(".updateBox");
+const updateForm = document.querySelector("#updateForm");
+
+ 
+async function updateImage(event) {
+  event.preventDefault();
+  const formData = new FormData(updateForm);
+
+  
+
+  url = `http://localhost:8080/api/image/update`;
+
+  let response = await fetch(url, {
+    method: "put",
+    body : formData  ,
+  });
+
+  let data = await response.text();
+
+  const responseParagraph = document.createElement("p");
+  responseParagraph.textContent = data;
+
+  updateBox.append(responseParagraph);
+}
+
+updateForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  updateImage(event);
 });
