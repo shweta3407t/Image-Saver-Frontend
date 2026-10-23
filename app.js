@@ -37,7 +37,7 @@ const page = 0;
 
 let currentPage;
 let totalPages;
-let itemLimit = 10;
+let itemLimit;
 let hasPrevious = false;
 let hasNext = false;
 

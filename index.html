@@ -12,149 +12,147 @@
     </header>
 
     <div id="container">
-      <div id="firstPage">
-        <div class="uploadBox">
-          <h2>Upload Image</h2>
+      <div class="uploadBox">
+        <h2>Upload Image</h2>
 
-          <form id="uploadForm">
-            <label
-              >Name :
-              <input type="text" name="title" placeholder="Enter title" />
-            </label>
-            <br />
+        <form id="uploadForm">
+          <label
+            >Name :
+            <input type="text" name="title" placeholder="Enter title" />
+          </label>
+          <br />
 
-            <label
-              >Deacription :
-              <input
-                type="text"
-                name="description"
-                placeholder="Enter description"
-              /> </label
-            ><br />
+          <label
+            >Deacription :
+            <input
+              type="text"
+              name="description"
+              placeholder="Enter description"
+            /> </label
+          ><br />
 
-            <label
-              >Tag :
-              <input type="text" name="tag" placeholder="Enter tag" /> </label
-            ><br />
+          <label
+            >Tag :
+            <input type="text" name="tag" placeholder="Enter tag" /> </label
+          ><br />
 
-            <label
-              >category :
-              <input
-                type="text"
-                name="category"
-                placeholder="Enter category"
-              /> </label
-            ><br />
+          <label
+            >category :
+            <input
+              type="text"
+              name="category"
+              placeholder="Enter category"
+            /> </label
+          ><br />
 
-            <label
-              >File :
-              <input
-                type="file"
-                name="file"
-                placeholder="Select ile"
-                accept="image/*"
-              /> </label
-            ><br />
+          <label
+            >File :
+            <input
+              type="file"
+              name="file"
+              placeholder="Select ile"
+              accept="image/*"
+            /> </label
+          ><br />
 
-            <button class="submitButton" name="submit">Submit info</button>
-          </form>
+          <button class="submitButton" name="submit">Submit info</button>
+        </form>
+      </div>
+      <!-- //search -->
+
+      <div class="searchBox">
+        <h2>search Image</h2>
+
+        <form id="searchForm">
+          <label
+            >Search Image:
+            <input
+              type="text"
+              id="keyword"
+              placeholder="Enter keyword to search image"
+            />
+
+            <button class="submitButton">Search</button>
+
+            <ol id="results-list"></ol>
+          </label>
+        </form>
+
+        <div class="pagination-container">
+          <button id="prev-btn" type="button">Previous Page</button>
+
+          <div id="page-numbers"></div>
+
+          <button id="next-btn" type="button">Next Page</button>
         </div>
-        <!-- //search -->
+      </div>
 
-        <div class="searchBox">
-          <h2>search Image</h2>
+      <!-- delete -->
 
-          <form id="searchForm">
-            <label
-              >Search Image:
-              <input
-                type="text"
-                id="keyword"
-                placeholder="Enter keyword to search image"
-              />
+      <div class="deleteBox">
+        <h2>Delete Image</h2>
 
-              <button class="submitButton">Search</button>
+        <form id="deleteForm">
+          <label
+            >Delete Image:
+            <input
+              type="number"
+              id="delete"
+              placeholder="Enter image id to delete image"
+            />
+          </label>
+          <button id="submitButton">Delete</button>
+        </form>
+      </div>
 
-              <ol id="results-list"></ol>
-            </label>
-          </form>
+      <!-- //update -->
 
-          <div class="pagination-container">
-            <button id="prev-btn" type="button">Previous Page</button>
+      <div class="updateBox">
+        <h2>Update Image</h2>
+        <form id="updateForm">
+          <label
+            >Id:
+            <input
+              type="text"
+              id="updateId"
+              placeholder="Enter Image id to update"
+          /></label>
 
-            <div id="page-numbers"></div>
+          <br />
+          <label
+            >Enter new title :
+            <input
+              type="text"
+              id="title"
+              placeholder="Enter updated name" /></label
+          ><br />
 
-            <button id="next-btn" type="button">Next Page</button>
-          </div>
-        </div>
+          <label
+            >Enter new description :
+            <input
+              type="text"
+              id="description"
+              placeholder="Enter updated description" /></label
+          ><br />
 
-        <!-- delete -->
+          <label
+            >Enter new tag :
+            <input
+              type="text"
+              id="tag"
+              placeholder="Enter updated tag" /></label
+          ><br />
 
-        <div class="deleteBox">
-          <h2>Delete Image</h2>
+          <label
+            >Enter new category :
+            <input
+              type="text"
+              id="category"
+              placeholder="Enter updated category" /></label
+          ><br />
 
-          <form id="deleteForm">
-            <label
-              >Delete Image:
-              <input
-                type="number"
-                id="delete"
-                placeholder="Enter image id to delete image"
-              />
-            </label>
-            <button id="submitButton">Delete</button>
-          </form>
-        </div>
-
-        <!-- //update -->
-
-        <div class="updateBox">
-          <h2>Update Image</h2>
-          <form id="updateForm">
-            <label
-              >Id:
-              <input
-                type="text"
-                id="updateId"
-                placeholder="Enter Image id to update"
-            /></label>
-
-            <br />
-            <label
-              >Enter new title :
-              <input
-                type="text"
-                id="title"
-                placeholder="Enter updated name" /></label
-            ><br />
-
-            <label
-              >Enter new description :
-              <input
-                type="text"
-                id="description"
-                placeholder="Enter updated description" /></label
-            ><br />
-
-            <label
-              >Enter new tag :
-              <input
-                type="text"
-                id="tag"
-                placeholder="Enter updated tag" /></label
-            ><br />
-
-            <label
-              >Enter new category :
-              <input
-                type="text"
-                id="category"
-                placeholder="Enter updated category" /></label
-            ><br />
-
-            <button id="submitButton">Update</button>
-          </form>
-        </div>
+          <button id="submitButton">Update</button>
+        </form>
       </div>
     </div>
 
