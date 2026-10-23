@@ -49,7 +49,7 @@ const listContainer = document.getElementById("results-list");
 
 const singleImageDataList = document.createElement("ol");
 
-async function searchImage(currentPage) {
+async function searchImage(currentPage  ) {
   // event.preventDefault();
 
   listContainer.innerHTML = "";
@@ -61,13 +61,11 @@ async function searchImage(currentPage) {
   if (keyword) {
     url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
   } else {
-    url = `http://localhost:8080/api/image/search`;
+    url = `http://localhost:8080/api/image/search?page=${currentPage}`;
   }
 
-  ///incomplete
-  // //let  url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
-
-  //   let url = `http://localhost:8080/api/image/search`;
+   console.log("Requesting page:", currentPage);
+  console.log("Request URL:", url);
 
   const response = await fetch(url);
 
@@ -75,14 +73,11 @@ async function searchImage(currentPage) {
   console.log(data);
 
   const content = data.content;
-  // currentPage = Number(data.currentPage);
-  totalPages = Number(data.totalPages);
-  // totalElements = data.totalElements;
-  itemLimit = Number(data.itemLimit);
+
   hasPrevious = Boolean(data.hasPrevious);
   hasNext = Boolean(data.hasNext);
+  totalPages= Number(data.totalPages);
 
-  let thumbnailUrl;
 
   content.forEach((item) => {
     //content
@@ -116,11 +111,11 @@ async function searchImage(currentPage) {
     li.appendChild(description);
 
     //thummbnail
-    const thumbnail = document.createElement("li");
-    thumbnail.textContent = "thumbnailUrl : " + item.thumbnailUrl;
-    li.appendChild(thumbnail);
+    let thumbnailUrl = item.thumbnailUrl;
 
-    thumbnailUrl = item.thumbnailUrl;
+    const thumbnail = document.createElement("li");
+    thumbnail.textContent = "thumbnailUrl : " + thumbnailUrl;
+    li.appendChild(thumbnail);
 
     //create
     const createdAt = document.createElement("li");
@@ -175,6 +170,9 @@ async function searchImage(currentPage) {
       img.classList.add("image");
       img.src = objectUrl;
 
+      img.style.maxWidth = "300px";
+      img.style.display = "block";
+
       imageItem.innerHTML = "";
       imageItem.appendChild(img);
       imageVisible = true;
@@ -187,7 +185,7 @@ async function searchImage(currentPage) {
 
   displayList(currentPage, totalPages, 10);
 
-  hasPreviousBtn.disabled = currentPage === 0;
+hasPreviousBtn.disabled = currentPage === 0;
   hasNextBtn.disabled = currentPage >= totalPages - 1;
 }
 
@@ -214,6 +212,7 @@ function displayList(currentPage, totalPages, maxVisiblePages = 10) {
 
   pagenationData.pages.forEach((page) => {
     const btn = document.createElement("button");
+ 
 
     btn.textContent = page;
     btn.type = "button";
@@ -221,7 +220,7 @@ function displayList(currentPage, totalPages, maxVisiblePages = 10) {
 
     btn.addEventListener("click", () => {
       currentPage = page;
-      searchImage();
+      searchImage( currentPage);
     });
     pageNumbers.appendChild(btn);
   });
@@ -279,7 +278,7 @@ function getPage(currentPage, totalPages, maxVisiblePages = 10) {
 hasPreviousBtn.addEventListener("click", () => {
   if (hasPrevious && currentPage > 0) {
     currentPage--;
-    searchImage(currentPage);
+    searchImage(currentPage );
   }
 });
 
@@ -302,7 +301,7 @@ async function deleteImage(event) {
 
   const id = deleteButton.value;
 
-  url = `http://localhost:8080/api/image/delete?id=${encodeURIComponent(id)}`;
+  const url = `http://localhost:8080/api/image/delete?id=${encodeURIComponent(id)}`;
 
   let response = await fetch(url, {
     method: "DELETE",
@@ -329,18 +328,19 @@ const updateForm = document.querySelector("#updateForm");
 
 // const id = document.querySelector("#id").value;
 
-
 async function updateImage(event) {
   event.preventDefault();
   const formData = new FormData(updateForm);
+  
+  const id =   document.querySelector("#updateId").value;
+  const title =  document.querySelector("#title").value;
+  const description=  document.querySelector("#description").value;
+  const tag=  document.querySelector("#tag").value;
+  const category =   document.querySelector("#category").value;
 
-
- 
-
-  url = `http://localhost:8080/api/image/update`; 
-
+  const url = `http://localhost:8080/api/image/update?id=${encodeURIComponent(id)}&title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&tag=${encodeURIComponent(tag)}&category=${encodeURIComponent(category)}`;
   let response = await fetch(url, {
-    method: "PUT",
+    method: "put" , 
     body: formData,
   });
 
@@ -352,8 +352,4 @@ async function updateImage(event) {
   updateBox.append(responseParagraph);
 }
 
-updateForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  updateImage(event);
-});
+updateForm.addEventListener("submit",  updateImage);
