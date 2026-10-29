@@ -3,7 +3,6 @@
   padding: 0;
 }
 
-
 body {
   background-color: deeppink;
   align-items: center;
@@ -18,11 +17,10 @@ body {
 
   height: 100vh;
   width: vh;
-  
 
+  gap: 10px;
 }
 
- 
 h2 {
   margin-left: 10px;
   margin-right: 10px;
@@ -41,22 +39,20 @@ h2 {
 .uploadBox {
   background-color: antiquewhite;
 
-  flex-grow: 0%;
-  justify-content: center;
+  align-items: center;
   padding-bottom: 10px;
   padding-left: 10px;
 }
 
 .updateBox {
   background-color: antiquewhite;
-  justify-content: center;
+  align-items: center;
   padding-bottom: 10px;
   padding-left: 10px;
 }
 
 .searchBox {
   background-color: antiquewhite;
-    flex-grow: 0%;
   align-items: center;
   padding-bottom: 10px;
   padding-left: 10px;
@@ -64,13 +60,12 @@ h2 {
 
 .deleteBox {
   background-color: antiquewhite;
-    flex-grow: 0%;
   align-items: center;
   padding-bottom: 10px;
   padding-left: 10px;
 }
- 
- .pagination-container {
+
+.pagination-container {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;

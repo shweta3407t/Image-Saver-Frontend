@@ -37,19 +37,17 @@ const page = 0;
 
 let currentPage;
 let totalPages;
-let itemLimit;
+const size = 4;
 let hasPrevious = false;
 let hasNext = false;
 
 let li = document.createElement("li");
 
-let imageButton = document.createElement("button");
-
 const listContainer = document.getElementById("results-list");
 
 const singleImageDataList = document.createElement("ol");
 
-async function searchImage(currentPage  ) {
+async function searchImage(currentPage) {
   // event.preventDefault();
 
   listContainer.innerHTML = "";
@@ -59,12 +57,12 @@ async function searchImage(currentPage  ) {
 
   let url;
   if (keyword) {
-    url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}`;
+    url = `http://localhost:8080/api/image/search/keyword?keyword=${encodeURIComponent(keyword)}&page=${currentPage}&size=${size}`;
   } else {
-    url = `http://localhost:8080/api/image/search?page=${currentPage}`;
+    url = `http://localhost:8080/api/image/search?page=${currentPage}&size=${size}`;
   }
 
-   console.log("Requesting page:", currentPage);
+  console.log("Requesting page:", currentPage);
   console.log("Request URL:", url);
 
   const response = await fetch(url);
@@ -74,21 +72,27 @@ async function searchImage(currentPage  ) {
 
   const content = data.content;
 
+  // currentPage = Number(data.currentPage);
+  totalPages = Number(data.totalPages);
+
   hasPrevious = Boolean(data.hasPrevious);
   hasNext = Boolean(data.hasNext);
-  totalPages= Number(data.totalPages);
-
 
   content.forEach((item) => {
     //content
 
     li = document.createElement("li");
 
-    //title
-    imageButton = document.createElement("button");
+    //title button
 
-    imageButton.textContent = "Title : " + item.title;
+    const imageButton = document.createElement("button");
+    imageButton.textContent = "Title(Click to see image ) : " + item.title;
     li.appendChild(imageButton);
+
+    //download button
+    const downloadButton = document.createElement("button");
+    downloadButton.textContent = "download Image";
+    li.appendChild(downloadButton);
 
     //id
     const id = document.createElement("li");
@@ -111,11 +115,18 @@ async function searchImage(currentPage  ) {
     li.appendChild(description);
 
     //thummbnail
-    let thumbnailUrl = item.thumbnailUrl;
+    const thumbnailUrl = item.thumbnailUrl;
 
     const thumbnail = document.createElement("li");
     thumbnail.textContent = "thumbnailUrl : " + thumbnailUrl;
     li.appendChild(thumbnail);
+
+    //originalurl
+
+    const originalUrl = item.originalUrl;
+    const original = document.createElement("li");
+    original.textContent = "originalUrl : " + originalUrl;
+    li.appendChild(original);
 
     //create
     const createdAt = document.createElement("li");
@@ -127,17 +138,19 @@ async function searchImage(currentPage  ) {
     updatedAt.textContent = "UpdatedAt : " + item.updatedAt;
     li.appendChild(updatedAt);
 
-    //image
+    singleImageDataList.appendChild(li);
+
+    // show image
 
     const imageItem = document.createElement("li");
     imageItem.classList.add("image-item");
 
-    singleImageDataList.appendChild(imageItem);
+    singleImageDataList.prepend(imageItem);
 
     let imageVisible = false;
     let objectUrl = null;
 
-    //async function
+    //async function for show thumbnail image  
     imageButton.addEventListener("click", async (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -155,7 +168,9 @@ async function searchImage(currentPage  ) {
 
       imageItem.textContent = "loading image...";
 
-      let url = `http://localhost:8080/api/image/download/${encodeURIComponent(thumbnailUrl)}`;
+      let url = `http://localhost:8080/api/image/download/thumbnail?thumbnailUrl=${encodeURIComponent(thumbnailUrl)}`;
+
+      console.log("ssssssssssssssssssssss")
 
       const response = await fetch(url);
 
@@ -171,21 +186,50 @@ async function searchImage(currentPage  ) {
       img.src = objectUrl;
 
       img.style.maxWidth = "300px";
-      img.style.display = "block";
+      img.style.display = "center";
 
       imageItem.innerHTML = "";
       imageItem.appendChild(img);
       imageVisible = true;
     });
 
-    singleImageDataList.appendChild(li);
+    //Async function for dowmload original image 
+    downloadButton.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      let url = `http://localhost:8080/api/image/download/original?originalUrl=${encodeURIComponent(originalUrl)}`;
+
+      const response = await fetch(url);
+
+      const blobImage = await response.blob();
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+      objectUrl = URL.createObjectURL(blobImage);
+
+      const hiddenAnchor = document.createElement("a");
+      hiddenAnchor.style.display = "none";
+      hiddenAnchor.href = objectUrl;
+
+      // 3. Extract just the filename from the key for the saved file name
+      hiddenAnchor.download = originalUrl;
+
+      // 4. Append to body, simulate a click event, and remove it immediately
+      singleImageDataList.appendChild(hiddenAnchor);
+      hiddenAnchor.click();
+       singleImageDataList.removeChild(hiddenAnchor);
+
+      // 5. Free up memory by revoking the temporary local URL
+      window.URL.revokeObjectURL(objectUrl);
+    });
   });
 
   listContainer.appendChild(singleImageDataList);
 
   displayList(currentPage, totalPages, 10);
 
-hasPreviousBtn.disabled = currentPage === 0;
+  hasPreviousBtn.disabled = currentPage === 0;
   hasNextBtn.disabled = currentPage >= totalPages - 1;
 }
 
@@ -212,15 +256,14 @@ function displayList(currentPage, totalPages, maxVisiblePages = 10) {
 
   pagenationData.pages.forEach((page) => {
     const btn = document.createElement("button");
- 
 
-    btn.textContent = page;
+    btn.textContent = page + 1;
     btn.type = "button";
     btn.classList.toggle("active", page === currentPage);
 
     btn.addEventListener("click", () => {
       currentPage = page;
-      searchImage( currentPage);
+      searchImage(currentPage);
     });
     pageNumbers.appendChild(btn);
   });
@@ -276,20 +319,20 @@ function getPage(currentPage, totalPages, maxVisiblePages = 10) {
 //pagination
 
 hasPreviousBtn.addEventListener("click", () => {
-  if (hasPrevious && currentPage > 0) {
+  if (currentPage > 0) {
     currentPage--;
-    searchImage(currentPage );
+    searchImage(currentPage);
   }
 });
 
 hasNextBtn.addEventListener("click", () => {
-  if (hasNext && currentPage < totalPages - 1) {
+  if (currentPage < totalPages - 1) {
     currentPage++;
     searchImage(currentPage);
   }
 });
 
-// ==================== DELETE 1 SEARCH ====================
+// ==================== DELETE IMAGE ====================
 
 const deleteBox = document.querySelector(".deleteBox");
 const deleteForm = document.querySelector("#deleteForm");
@@ -301,6 +344,17 @@ async function deleteImage(event) {
 
   const id = deleteButton.value;
 
+  console.log("id = " + id);
+
+  if (!id) {
+    let message = document.createElement("p");
+
+    message.textContent = "Please enter image id to delete ! ";
+    deleteBox.append(message);
+
+    return;
+  }
+
   const url = `http://localhost:8080/api/image/delete?id=${encodeURIComponent(id)}`;
 
   let response = await fetch(url, {
@@ -310,6 +364,7 @@ async function deleteImage(event) {
   let data = await response.text();
 
   const responseParagraph = document.createElement("p");
+
   responseParagraph.textContent = data;
 
   deleteBox.append(responseParagraph);
@@ -330,17 +385,18 @@ const updateForm = document.querySelector("#updateForm");
 
 async function updateImage(event) {
   event.preventDefault();
+
   const formData = new FormData(updateForm);
-  
-  const id =   document.querySelector("#updateId").value;
-  const title =  document.querySelector("#title").value;
-  const description=  document.querySelector("#description").value;
-  const tag=  document.querySelector("#tag").value;
-  const category =   document.querySelector("#category").value;
+
+  const id = document.querySelector("#updateId").value;
+  const title = document.querySelector("#title").value;
+  const description = document.querySelector("#description").value;
+  const tag = document.querySelector("#tag").value;
+  const category = document.querySelector("#category").value;
 
   const url = `http://localhost:8080/api/image/update?id=${encodeURIComponent(id)}&title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&tag=${encodeURIComponent(tag)}&category=${encodeURIComponent(category)}`;
   let response = await fetch(url, {
-    method: "put" , 
+    method: "put",
     body: formData,
   });
 
@@ -352,4 +408,4 @@ async function updateImage(event) {
   updateBox.append(responseParagraph);
 }
 
-updateForm.addEventListener("submit",  updateImage);
+updateForm.addEventListener("submit", updateImage);
