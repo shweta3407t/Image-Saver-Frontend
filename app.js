@@ -140,17 +140,18 @@ async function searchImage(currentPage) {
 
     singleImageDataList.appendChild(li);
 
-    // show image
+    // show thumbnail image
 
     const imageItem = document.createElement("li");
     imageItem.classList.add("image-item");
+    li.prepend(imageItem);
 
-    singleImageDataList.prepend(imageItem);
+    // singleImageDataList.appendChild(imageItem);
 
     let imageVisible = false;
     let objectUrl = null;
 
-    //async function for show thumbnail image  
+    //async function for show thumbnail image
     imageButton.addEventListener("click", async (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -166,24 +167,13 @@ async function searchImage(currentPage) {
         return;
       }
 
+      
       imageItem.textContent = "loading image...";
-
-      let url = `http://localhost:8080/api/image/download/thumbnail?thumbnailUrl=${encodeURIComponent(thumbnailUrl)}`;
-
-      console.log("ssssssssssssssssssssss")
-
-      const response = await fetch(url);
-
-      const blobImage = await response.blob();
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-      objectUrl = URL.createObjectURL(blobImage);
 
       const img = document.createElement("img");
       img.alt = item.title || "Image";
       img.classList.add("image");
-      img.src = objectUrl;
+      img.src = thumbnailUrl;
 
       img.style.maxWidth = "300px";
       img.style.display = "center";
@@ -193,36 +183,41 @@ async function searchImage(currentPage) {
       imageVisible = true;
     });
 
-    //Async function for dowmload original image 
+    // download image
+
+    const downloadItem = document.createElement("li");
+    downloadItem.classList.add("download-item");
+
+    singleImageDataList.appendChild(downloadItem);
+
+   
+    //Async function for dowmload original image
     downloadButton.addEventListener("click", async (event) => {
       event.preventDefault();
       event.stopPropagation();
 
-      let url = `http://localhost:8080/api/image/download/original?originalUrl=${encodeURIComponent(originalUrl)}`;
-
-      const response = await fetch(url);
+      const response = await fetch(originalUrl);
 
       const blobImage = await response.blob();
-      if (objectUrl) {
+      if (blobImage) {
         URL.revokeObjectURL(objectUrl);
       }
+      
       objectUrl = URL.createObjectURL(blobImage);
 
-      const hiddenAnchor = document.createElement("a");
-      hiddenAnchor.style.display = "none";
-      hiddenAnchor.href = objectUrl;
 
-      // 3. Extract just the filename from the key for the saved file name
-      hiddenAnchor.download = originalUrl;
+      const fileName = originalUrl.substring(originalUrl.lastIndexOf("/") + 1);
 
-      // 4. Append to body, simulate a click event, and remove it immediately
-      singleImageDataList.appendChild(hiddenAnchor);
-      hiddenAnchor.click();
-       singleImageDataList.removeChild(hiddenAnchor);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = fileName;
 
-      // 5. Free up memory by revoking the temporary local URL
-      window.URL.revokeObjectURL(objectUrl);
-    });
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(objectUrl);
+    }  );
   });
 
   listContainer.appendChild(singleImageDataList);
